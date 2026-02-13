@@ -1,6 +1,8 @@
-package com.ingressosjogos;
+package ingressosjogos.webApp;
 
 import java.io.IOException;
+
+import ingressosjogos.webApp.App;
 import javafx.fxml.FXML;
 
 public class PrimaryController {

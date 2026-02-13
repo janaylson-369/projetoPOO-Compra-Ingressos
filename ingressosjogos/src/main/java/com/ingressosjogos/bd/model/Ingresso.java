@@ -1,0 +1,81 @@
+package com.ingressosjogos.bd.model;
+
+public class Ingresso {
+    private int id;
+    private double preco;
+    private String assento;
+    private StatusIngresso status;
+    private Integer idJogo;
+    private Integer idTorcedor;
+
+    public Ingresso() {
+        
+    }
+
+    public Ingresso(int id, double preco, String assento, StatusIngresso status, Integer idJogo, Integer idTorcedor) {
+        this.id = id;
+        this.preco = preco;
+        this.assento = assento;
+        this.status = status;
+        this.idJogo = idJogo;
+        this.idTorcedor = idTorcedor;
+    }
+
+    public Ingresso(double preco, String assento, StatusIngresso status, Integer idJogo, Integer idTorcedor) {
+        this.preco = preco;
+        this.assento = assento;
+        this.status = status;
+        this.idJogo = idJogo;
+        this.idTorcedor = idTorcedor;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public void setPreco(double preco) {
+        this.preco = preco;
+    }
+
+    public String getAssento() {
+        return assento;
+    }
+
+    public void setAssento(String assento) {
+        this.assento = assento;
+    }
+
+    public StatusIngresso getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusIngresso status) {
+        this.status = status;
+    }
+
+    public Integer getIdJogo() {
+        return idJogo;
+    }
+
+    public void setIdJogo(Integer idJogo) {
+        this.idJogo = idJogo;
+    }
+
+    public Integer getIdTorcedor() {
+        return idTorcedor;
+    }
+
+    public void setIdTorcedor(Integer idTorcedor) {
+        this.idTorcedor = idTorcedor;
+    }
+
+    
+}

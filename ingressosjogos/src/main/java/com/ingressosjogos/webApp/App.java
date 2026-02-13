@@ -1,4 +1,4 @@
-package com.ingressosjogos;
+package ingressosjogos.webApp;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
