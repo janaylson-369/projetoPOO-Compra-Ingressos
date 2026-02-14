@@ -44,14 +44,10 @@ create table Ingresso (
 	status      VARCHAR(20) NOT NULL DEFAULT 'livre',
 	id_jogo     INTEGER NOT NULL,
 	id_torcedor INTEGER,
-	
 
-    FOREIGN KEY (id_jogo)
-    REFERENCES Jogo (id),
+    FOREIGN KEY (id_jogo) REFERENCES Jogo (id),
 
-
-    FOREIGN KEY (id_torcedor)
-    REFERENCES Torcedor (id),
+    FOREIGN KEY (id_torcedor) REFERENCES Torcedor (id),
 
 
     CHECK (status IN ('livre','vendido')),
@@ -59,5 +55,7 @@ create table Ingresso (
     UNIQUE (id_jogo, assento)
 );
 
-insert into Estagio(nome,localizacao,capacidade) values 
-('Mineirão','minas gerais',20),(),();
+insert into Estadio(nome,localizacao,capacidade) values 
+('Mineirão','minas gerais',20),
+('Maracanã','Rio de janeiro',100),
+('Santos','santa catarina',150);

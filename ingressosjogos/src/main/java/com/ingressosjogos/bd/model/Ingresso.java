@@ -4,7 +4,7 @@ public class Ingresso {
     private int id;
     private double preco;
     private String assento;
-    private StatusIngresso status;
+    private String status;
     private Integer idJogo;
     private Integer idTorcedor;
 
@@ -12,7 +12,7 @@ public class Ingresso {
         
     }
 
-    public Ingresso(int id, double preco, String assento, StatusIngresso status, Integer idJogo, Integer idTorcedor) {
+    public Ingresso(int id, double preco, String assento, String status, Integer idJogo, Integer idTorcedor) {
         this.id = id;
         this.preco = preco;
         this.assento = assento;
@@ -21,7 +21,7 @@ public class Ingresso {
         this.idTorcedor = idTorcedor;
     }
 
-    public Ingresso(double preco, String assento, StatusIngresso status, Integer idJogo, Integer idTorcedor) {
+    public Ingresso(double preco, String assento, String status, Integer idJogo, Integer idTorcedor) {
         this.preco = preco;
         this.assento = assento;
         this.status = status;
@@ -53,11 +53,11 @@ public class Ingresso {
         this.assento = assento;
     }
 
-    public StatusIngresso getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StatusIngresso status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
