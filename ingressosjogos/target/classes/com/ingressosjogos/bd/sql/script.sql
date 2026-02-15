@@ -56,6 +56,6 @@ create table Ingresso (
 );
 
 insert into Estadio(nome,localizacao,capacidade) values 
-('Mineirão','minas gerais',20),
-('Maracanã','Rio de janeiro',100),
-('Santos','santa catarina',150);
+('Mineirão','Minas Gerais',20000),
+('Maracanã','Rio de Janeiro',50000),
+('Allianz Parque','São Paulo',40000);

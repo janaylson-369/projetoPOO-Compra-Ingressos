@@ -1,19 +1,19 @@
 package com.ingressosjogos.bd.model;
 
-public class Times {
+public class Time {
     private int id;
     private String nome;
 
-    public Times() {
+    public Time() {
         
     }
 
-    public Times(int id, String nome) {
+    public Time(int id, String nome) {
         this.id = id;
         this.nome = nome;
     }
 
-    public Times(String nome) {
+    public Time(String nome) {
         this.nome = nome;
     }
 
