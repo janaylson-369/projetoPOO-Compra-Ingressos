@@ -4,6 +4,6 @@ module com.ingressosjogos {
     requires java.base;
     requires java.sql;
 
-    opens ingressosjogos to javafx.fxml;
-    exports ingressosjogos;
+    opens com.ingressosjogos to javafx.fxml;
+    exports com.ingressosjogos.webApp;
 }

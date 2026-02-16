@@ -1,8 +1,8 @@
-package ingressosjogos.webApp;
+package com.ingressosjogos.webApp;
 
 import java.io.IOException;
 
-import ingressosjogos.webApp.App;
+import com.ingressosjogos.webApp.App;
 import javafx.fxml.FXML;
 
 public class SecondaryController {
