@@ -2,10 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
  */
-package com.ingressosjogos;
+package com.ingressosjogos.controller;
 
+import com.ingressosjogos.bd.DAO.EstadioDAO;
+import bd.DAO.IngressoDAO;
+import bd.DAO.JogoDAO;
+import com.ingressosjogos.bd.DAO.TimeDAO;
+import com.ingressosjogos.bd.model.Estadio;
+import com.ingressosjogos.bd.model.Ingresso;
+import com.ingressosjogos.bd.model.Jogo;
+import com.ingressosjogos.bd.model.Time;
 import java.net.URL;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,29 +35,29 @@ public class Tela_cadastro_jogoController implements Initializable {
     @FXML
     private TextField campoCapacidadeEstadio;
 
-    // ⚽ Dados dos Times
+    
     @FXML
     private TextField campoTimeCasa;
     @FXML
     private TextField campoTimeFora;
 
-    // 📅 Dados da Partida
+    
     @FXML
     private DatePicker campoDataJogo;
     @FXML
     private TextField campoHoraJogo;
 
-    // 🎟️ Dados dos Ingressos
+    
     @FXML
     private TextField campoPrecoIngresso;
 
-    // Label para mensagens de erro/sucesso
+    //  mensagens de erro/sucesso
     @FXML
     private Label labelMensagemAdmin;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Inicializações automáticas podem ficar aqui (ex: focar no primeiro campo)
+        
     }    
 
     @FXML
@@ -70,7 +78,7 @@ public class Tela_cadastro_jogoController implements Initializable {
             return;
         }
 
-        // Conversões de (Texto para Número / Data)
+        // (Texto para Número / Data)
         int capacidade;
         double precoBase;
         Timestamp dataHoraBanco;
@@ -89,6 +97,37 @@ public class Tela_cadastro_jogoController implements Initializable {
             return;
         }
 
-        // ultimo passo - Salvar no Banco de Dados
+        try {
+            // 1. Salvar o Estádio e pegar o ID
+            Estadio estadio = new Estadio(nomeEstadio, localEstadio, capacidade);
+            EstadioDAO estadioDAO = new EstadioDAO();
+            int idEstadio = estadioDAO.salvarRetornandoId(estadio);
+
+            // 2. Salvar os Times e pegar os IDs
+            TimeDAO timeDAO = new TimeDAO();
+            int idTimeCasa = timeDAO.salvarRetornandoId(new Time(timeCasa));
+            int idTimeFora = timeDAO.salvarRetornandoId(new Time(timeFora));
+
+            // 3. Salvar o Jogo e pegar o ID
+            Jogo jogo = new Jogo(dataHoraBanco, idEstadio, idTimeCasa, idTimeFora);
+            JogoDAO jogoDAO = new JogoDAO();
+            int idJogo = jogoDAO.salvarRetornandoId(jogo);
+
+            // 4. geracao dos Ingressos 
+            IngressoDAO ingressoDAO = new IngressoDAO();
+            for(int i = 1; i <= capacidade; i++) {
+                String assento = "A" + i; 
+                Ingresso ingresso = new Ingresso(precoBase, assento, "livre", idJogo);
+                ingressoDAO.salvar(ingresso);
+            }
+
+            labelMensagemAdmin.setText("Partida e ingressos cadastrados com sucesso!");
+            labelMensagemAdmin.setStyle("-fx-text-fill: green;");
+
+        } catch (Exception e) {
+            labelMensagemAdmin.setText("Erro ao salvar no banco: " + e.getMessage());
+            labelMensagemAdmin.setStyle("-fx-text-fill: red;");
+            e.printStackTrace();
+        }
     }
 }

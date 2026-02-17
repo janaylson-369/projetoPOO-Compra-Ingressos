@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
  */
-package com.ingressosjogos;
+package com.ingressosjogos.controller;
 
+import com.ingressosjogos.conexaoBanco;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,7 +25,7 @@ import javafx.scene.layout.VBox;
 
 public class Tela_jogosController implements Initializable {
 
-    // A nossa "prateleira" onde vamos jogar os cartões
+    
     @FXML
     private FlowPane painelJogos;
 
@@ -34,10 +35,10 @@ public class Tela_jogosController implements Initializable {
     }
 
     private void carregarJogosDoBanco() {
-        // Limpar cartao falso 
+        
         painelJogos.getChildren().clear();
 
-        
+       
         String sql = "SELECT j.id, j.data_hora, e.nome AS estadio, tc.nome AS time_casa, tf.nome AS time_fora, " +
                      "(SELECT MIN(preco) FROM Ingresso WHERE id_jogo = j.id AND status = 'livre') AS preco_min " +
                      "FROM Jogo j " +
@@ -46,16 +47,39 @@ public class Tela_jogosController implements Initializable {
                      "JOIN Times tf ON j.id_time_fora = tf.id " +
                      "ORDER BY j.data_hora ASC";
 
+        try (Connection conn = conexaoBanco.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int idJogo = rs.getInt("id");
+                String timeCasa = rs.getString("time_casa");
+                String timeFora = rs.getString("time_fora");
+                String estadio = rs.getString("estadio");
+                Timestamp dataHora = rs.getTimestamp("data_hora");
+                double precoMin = rs.getDouble("preco_min");
+
         
+                VBox cartao = criarCartaoJogoDinamicamente(idJogo, timeCasa, timeFora, estadio, dataHora, precoMin);
+                
+
+                painelJogos.getChildren().add(cartao);
+            }
+
+        } catch (SQLException e) {
+            
+        }
     }
 
-    //  cria o visual do Card 
+    // O método "Desenhista": Ele cria o visual do Card via código, mantendo seus estilos inline!
     private VBox criarCartaoJogoDinamicamente(int idJogo, String casa, String fora, String estadio, Timestamp data, double preco) {
         VBox card = new VBox(15);
         card.setPadding(new Insets(20));
         card.setPrefSize(250, 300);
+        // Seu estilo raiz aplicado direto no código!
         card.setStyle("-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
 
+        // --- 1. Confronto (Times) ---
         HBox hboxTimes = new HBox(10);
         hboxTimes.setAlignment(Pos.CENTER);
         
@@ -68,21 +92,22 @@ public class Tela_jogosController implements Initializable {
         
         hboxTimes.getChildren().addAll(lblCasa, lblX, lblFora);
 
+        // --- 2. Estádio ---
         Label lblEstadio = new Label("📍 " + estadio);
         lblEstadio.setStyle("-fx-text-fill: #555; -fx-font-size: 14px;");
 
-
+        // --- 3. Data e Hora ---
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm");
         Label lblData = new Label("📅 " + sdf.format(data));
         lblData.setStyle("-fx-text-fill: #555; -fx-font-size: 14px; -fx-background-color: #f0f0f0; -fx-padding: 5; -fx-background-radius: 5;");
         lblData.setMaxWidth(Double.MAX_VALUE);
         lblData.setAlignment(Pos.CENTER);
 
-
+        // --- 4. Preço e Botão ---
         HBox hboxCompra = new HBox(20);
         hboxCompra.setAlignment(Pos.CENTER_LEFT);
         
-
+        // Verifica se ainda tem ingresso (se o preço mínimo não veio nulo/zero)
         String textoPreco = (preco > 0) ? String.format("R$ %.2f", preco) : "Esgotado";
         Label lblPreco = new Label(textoPreco);
         lblPreco.setStyle("-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #28a745;");
@@ -91,18 +116,18 @@ public class Tela_jogosController implements Initializable {
         btnComprar.setStyle("-fx-background-color: #ff8c00; -fx-text-fill: white; -fx-background-radius: 5; -fx-font-weight: bold; -fx-cursor: hand;");
         
         if (preco <= 0) {
-            btnComprar.setDisable(true); 
+            btnComprar.setDisable(true); // Desativa botão se não tiver ingresso
         }
 
-    
+        // Ação do botão: O que acontece quando clica em comprar?
         btnComprar.setOnAction(e -> {
             System.out.println("Usuário clicou para comprar ingresso do jogo ID: " + idJogo);
-          
+            // Aqui é onde você vai abrir a tela de selecionar assento depois!
         });
 
         hboxCompra.getChildren().addAll(lblPreco, btnComprar);
 
-    
+        // Empacota tudo dentro do cartão
         card.getChildren().addAll(hboxTimes, lblEstadio, lblData, hboxCompra);
 
         return card;
