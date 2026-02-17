@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="658.0" prefWidth="936.0" style="-fx-background-color: #E8ECEF;" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ingressosjogos.Tela_jogosController">
+<AnchorPane id="AnchorPane" prefHeight="658.0" prefWidth="936.0" style="-fx-background-color: #E8ECEF;" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ingressosjogos.controller.Tela_jogosController">
    <children>
       <Label layoutX="370.0" layoutY="30.0" text="Jogos Disponíveis" textFill="#333333">
          <font>

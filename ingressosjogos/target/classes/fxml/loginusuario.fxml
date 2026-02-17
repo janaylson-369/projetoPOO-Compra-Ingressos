@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="666.0" prefWidth="851.0" style="-fx-background-color: #E8ECEF;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.ingressosjogos.FXMLingressosController">
+<AnchorPane id="AnchorPane" prefHeight="666.0" prefWidth="851.0" style="-fx-background-color: #E8ECEF;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.ingressosjogos.controller.FXMLingressosController">
     <children>
         <VBox alignment="CENTER" layoutX="200.0" layoutY="75.0" prefHeight="450.0" prefWidth="400.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-padding: 30;">
             <children>

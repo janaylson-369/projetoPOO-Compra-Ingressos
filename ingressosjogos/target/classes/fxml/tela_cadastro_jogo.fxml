@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="696.0" prefWidth="759.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.ingressosjogos.Tela_cadastro_jogoController">
+<AnchorPane id="AnchorPane" prefHeight="696.0" prefWidth="759.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.ingressosjogos.Controller.Tela_cadastro_jogoController">
     <stylesheets>
         <URL value="@/styles/tela_cadastro_jogo.css" />
     </stylesheets>
