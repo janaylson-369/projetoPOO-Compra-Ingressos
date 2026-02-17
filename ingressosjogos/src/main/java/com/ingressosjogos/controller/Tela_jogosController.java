@@ -4,7 +4,7 @@
  */
 package com.ingressosjogos.controller;
 
-import com.ingressosjogos.conexaoBanco;
+import com.ingressosjogos.bd.util.ConnectionPostgres;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,20 +25,23 @@ import javafx.scene.layout.VBox;
 
 public class Tela_jogosController implements Initializable {
 
-    
     @FXML
     private FlowPane painelJogos;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        carregarJogosDoBanco();
+        try {
+            carregarJogosDoBanco();
+        } catch (Exception ex) {
+            System.getLogger(Tela_jogosController.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
     }
 
-    private void carregarJogosDoBanco() {
-        
+    private void carregarJogosDoBanco() throws Exception {
+        // 1. Limpa aquele cartão falso que deixamos de exemplo no FXML
         painelJogos.getChildren().clear();
 
-       
+        // 2. Consulta inteligente unindo Jogo, Estádio, Times e pegando o menor preço de Ingresso livre
         String sql = "SELECT j.id, j.data_hora, e.nome AS estadio, tc.nome AS time_casa, tf.nome AS time_fora, " +
                      "(SELECT MIN(preco) FROM Ingresso WHERE id_jogo = j.id AND status = 'livre') AS preco_min " +
                      "FROM Jogo j " +
@@ -47,7 +50,8 @@ public class Tela_jogosController implements Initializable {
                      "JOIN Times tf ON j.id_time_fora = tf.id " +
                      "ORDER BY j.data_hora ASC";
 
-        try (Connection conn = conexaoBanco.getConnection();
+
+        try (Connection conn = ConnectionPostgres.getConection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -59,19 +63,19 @@ public class Tela_jogosController implements Initializable {
                 Timestamp dataHora = rs.getTimestamp("data_hora");
                 double precoMin = rs.getDouble("preco_min");
 
-        
+                //  cria um cartão inteirinho para este jogo
                 VBox cartao = criarCartaoJogoDinamicamente(idJogo, timeCasa, timeFora, estadio, dataHora, precoMin);
                 
-
+                // Ad o cartão pronto na tela
                 painelJogos.getChildren().add(cartao);
             }
 
         } catch (SQLException e) {
-            
+            System.out.println("Erro ao buscar os jogos: " + e.getMessage());
         }
     }
 
-    // O método "Desenhista": Ele cria o visual do Card via código, mantendo seus estilos inline!
+    
     private VBox criarCartaoJogoDinamicamente(int idJogo, String casa, String fora, String estadio, Timestamp data, double preco) {
         VBox card = new VBox(15);
         card.setPadding(new Insets(20));
@@ -131,5 +135,14 @@ public class Tela_jogosController implements Initializable {
         card.getChildren().addAll(hboxTimes, lblEstadio, lblData, hboxCompra);
 
         return card;
+    }
+    
+    @FXML
+    private void abrirTelaCadastro(javafx.event.ActionEvent event) {
+        try {
+            com.ingressosjogos.App.setRoot("tela_cadastro_jogo");
+        } catch (Exception e) {
+            System.out.println("Erro ao abrir a tela de cadastro: " + e.getMessage());
+        }
     }
 }

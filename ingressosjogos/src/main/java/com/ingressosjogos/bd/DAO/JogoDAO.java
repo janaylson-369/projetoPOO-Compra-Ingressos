@@ -6,9 +6,6 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.SQLException;
-
-import com.ingressosjogos.bd.model.Jogo;
 import com.ingressosjogos.bd.model.Jogo;
 import com.ingressosjogos.bd.util.ConnectionPostgres;
 
@@ -27,6 +24,29 @@ public class JogoDAO {
                 st.executeUpdate();
             
         }
+    }
+    
+    public int salvarRetornandoId(Jogo jogo) throws Exception {
+        String sql = "INSERT INTO Jogo(data_hora, id_estadio, id_time_casa, id_time_fora) VALUES (?, ?, ?, ?)";
+        int idGerado = -1;
+
+        try (Connection c = ConnectionPostgres.getConection();
+             PreparedStatement st = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             
+            st.setTimestamp(1, jogo.getDataHora());
+            st.setInt(2, jogo.getIdEstadio());
+            st.setInt(3, jogo.getIdTimeCasa());
+            st.setInt(4, jogo.getIdTimeFora());
+            st.executeUpdate();
+            
+            try (ResultSet rs = st.getGeneratedKeys()) {
+                if (rs.next()) {
+                    idGerado = rs.getInt(1);
+                    jogo.setId(idGerado);
+                }
+            }
+        }
+        return idGerado;
     }
 
     public List<Jogo> listar() throws Exception{

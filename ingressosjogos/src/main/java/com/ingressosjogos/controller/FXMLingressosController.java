@@ -4,23 +4,14 @@
  */
 package com.ingressosjogos.controller;
 
-import java.io.IOException;
+import com.ingressosjogos.bd.model.Torcedor;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
-import javafx.scene.Node;
 
 public class FXMLingressosController implements Initializable {
 
@@ -35,7 +26,7 @@ public class FXMLingressosController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Inicializações, se necessário
+
     }    
 
     @FXML
@@ -44,17 +35,25 @@ public class FXMLingressosController implements Initializable {
         String email = campoEmail.getText().trim();
         String cpf = campoCPF.getText().trim();
 
-        // 1. Validação simples
         if (nome.isEmpty() || email.isEmpty() || cpf.isEmpty()) {
             labelMensagem.setText("Por favor, preencha todos os campos!");
             labelMensagem.setStyle("-fx-text-fill: red;");
             return;
         } 
-        Torcedor novoTorcedor = new Torcedor(email, nome, cpf);
-        labelMensagem.setText("Torcedor" + novoTorcedor.getNome()+ "Pronto para comprar!");
-        labelMensagem.setStyle("-fx-text-fill:green;");
-        campoEmail.clear();
-        campoNome.clear();
-        campoCPF.clear();
+        
+        try {
+            Torcedor novoTorcedor = new Torcedor(nome, email, cpf);
+            
+            // salva o torcedor no Banco de Dados
+            com.ingressosjogos.bd.DAO.TorcedorDAO dao = new com.ingressosjogos.bd.DAO.TorcedorDAO();
+            dao.salvar(novoTorcedor);
+
+            com.ingressosjogos.App.setRoot("tela_jogos");
+            
+        } catch (Exception e) {
+            labelMensagem.setText("Erro ao salvar ou abrir a tela: " + e.getMessage());
+            labelMensagem.setStyle("-fx-text-fill: red;");
+            e.printStackTrace(); 
+        }
     }
     }

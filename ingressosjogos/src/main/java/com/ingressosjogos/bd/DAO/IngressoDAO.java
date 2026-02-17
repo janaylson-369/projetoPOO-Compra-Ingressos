@@ -6,28 +6,79 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.SQLException;
 
 import com.ingressosjogos.bd.model.Ingresso;
 import com.ingressosjogos.bd.util.ConnectionPostgres;
 
 public class IngressoDAO {
     
+    
     public void salvar(Ingresso ingresso) throws Exception {
-        String sql = "INSERT INTO Ingresso " + "(preco,assento,status,id_jogo,id_torcedor) " + "VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO Ingresso (preco, assento, status, id_jogo, id_torcedor) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection c = ConnectionPostgres.getConection();
             PreparedStatement ps = c.prepareStatement(sql)){
             
-                ps.setInt(1, ingresso.getId());
-                ps.setDouble(2, ingresso.getPreco());
-                ps.setString(3, ingresso.getAssento());
-                ps.setString(4, ingresso.getStatus());
-                ps.setInt(4,ingresso.getIdJogo());
+            ps.setDouble(1, ingresso.getPreco());
+            ps.setString(2, ingresso.getAssento());
+            ps.setString(3, ingresso.getStatus());
+            ps.setInt(4, ingresso.getIdJogo());
+            
+            if (ingresso.getIdTorcedor() != null && ingresso.getIdTorcedor() > 0) {
                 ps.setInt(5, ingresso.getIdTorcedor());
-                ps.executeUpdate();
+            } else {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            }
+            
+            ps.executeUpdate();
         }
     }
+    
+    public void salvarEmLote(List<Ingresso> ingressos) throws Exception {
+        String sql = "INSERT INTO Ingresso (preco, assento, status, id_jogo, id_torcedor) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection c = ConnectionPostgres.getConection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            
+            c.setAutoCommit(false);
+
+            for (Ingresso ingresso : ingressos) {
+                ps.setDouble(1, ingresso.getPreco());
+                ps.setString(2, ingresso.getAssento());
+                ps.setString(3, ingresso.getStatus());
+                ps.setInt(4, ingresso.getIdJogo());
+                ps.setNull(5, java.sql.Types.INTEGER); // torcedor começa nulo
+                
+                ps.addBatch(); 
+            }
+
+            ps.executeBatch();
+            c.commit();
+        }
+    }
+
+    public void atualizar(Ingresso ingresso) throws Exception {
+        String sql = "UPDATE Ingresso SET preco=?, assento=?, status=?, id_jogo=?, id_torcedor=? WHERE id_ingresso=?";
+
+        try(Connection c = ConnectionPostgres.getConection();
+            PreparedStatement ps = c.prepareStatement(sql)){
+
+            ps.setDouble(1, ingresso.getPreco());
+            ps.setString(2, ingresso.getAssento());
+            ps.setString(3, ingresso.getStatus());
+            ps.setInt(4, ingresso.getIdJogo());
+            
+            if (ingresso.getIdTorcedor() != null && ingresso.getIdTorcedor() > 0) {
+                ps.setInt(5, ingresso.getIdTorcedor());
+            } else {
+                ps.setNull(5, java.sql.Types.INTEGER);
+            }
+            
+            ps.setInt(6, ingresso.getId());
+            ps.executeUpdate();
+        }
+    }
+    
 
     public List<Ingresso> listar() throws Exception{
         List<Ingresso> lista = new ArrayList<>();
@@ -73,22 +124,6 @@ public class IngressoDAO {
             }
         }
         return null;
-    }
-
-    public void atualizar(Ingresso ingresso)throws Exception{
-        String sql = "UPDATE Jogador SET preco=?,assento=?,"+
-        "status=?,id_jogo=?,id_torcedor=?  WHERE id=?";
-
-        try(Connection c = ConnectionPostgres.getConection();
-            PreparedStatement ps = c.prepareStatement(sql)){
-
-            ps.setDouble(1,ingresso.getPreco());
-            ps.setString(2,ingresso.getAssento());
-            ps.setString(3, ingresso.getStatus());
-            ps.setObject(4, ingresso.getIdJogo());
-            ps.setObject(5, ingresso.getIdTorcedor());
-            ps.execute();
-        }
     }
 
     public void excluir(int id) throws Exception {

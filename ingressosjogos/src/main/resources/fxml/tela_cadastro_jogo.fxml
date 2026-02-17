@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="696.0" prefWidth="759.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.ingressosjogos.Controller.Tela_cadastro_jogoController">
+<AnchorPane id="AnchorPane" prefHeight="696.0" prefWidth="759.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.ingressosjogos.controller.Tela_cadastro_jogoController">
     <stylesheets>
         <URL value="@/styles/tela_cadastro_jogo.css" />
     </stylesheets>
@@ -63,9 +63,10 @@
                             </Label>
                             <TextField fx:id="campoPrecoIngresso" promptText="Preço Base (R$)" />
                         </VBox>
-
+                        
                         <Button mnemonicParsing="false" onAction="#salvarCadastroCompleto" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5;" text="Salvar Tudo e Gerar Ingressos" />
-
+                        <Button mnemonicParsing="false" onAction="#voltarParaJogos" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand; -fx-padding: 8 15;" text="⬅️ Voltar para Jogos" />
+                        
                         <Label fx:id="labelMensagemAdmin" text="Preencha os dados e clique em salvar." textFill="#888888" />
                     </children>
                 </VBox>

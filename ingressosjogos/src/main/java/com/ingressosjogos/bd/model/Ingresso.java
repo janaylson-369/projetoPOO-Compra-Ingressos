@@ -8,8 +8,12 @@ public class Ingresso {
     private Integer idJogo;
     private Integer idTorcedor;
 
-    public Ingresso() {
-        
+    public Ingresso(double preco, String assento, String status, Integer idJogo) {
+        this.preco = preco;
+        this.assento = assento;
+        this.status = status;
+        this.idJogo = idJogo;
+        this.idTorcedor = null; //boyy o torcedor vai ficar nulo até a venda
     }
 
     public Ingresso(int id, double preco, String assento, String status, Integer idJogo, Integer idTorcedor) {

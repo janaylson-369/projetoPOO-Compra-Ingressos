@@ -6,26 +6,24 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.SQLException;
 
 import com.ingressosjogos.bd.model.Torcedor;
 import com.ingressosjogos.bd.util.ConnectionPostgres;
 
 public class TorcedorDAO {
 
-    public void salvar(Torcedor torcedor) throws Exception{
-        String sql = "INSERT INTO Torcedor \" + \"(nome,email,cpf) \" + \"VALUES (?,?,?)";
+    public void salvar(Torcedor torcedor) throws Exception {
+        String sql = "INSERT INTO Torcedor (nome, email, cpf) VALUES (?, ?, ?)";
 
         try (Connection c = ConnectionPostgres.getConection();
-            PreparedStatement ps = c.prepareStatement(sql)){
+             PreparedStatement ps = c.prepareStatement(sql)) {
             
-                ps.setString(1, torcedor.getNome());
-                ps.setString(2, torcedor.getEmail());
-                ps.setString(3, torcedor.getCpf());
-                ps.executeUpdate();
+            ps.setString(1, torcedor.getNome());
+            ps.setString(2, torcedor.getEmail());
+            ps.setString(3, torcedor.getCpf());
+            ps.executeUpdate();
         }
-
-    } 
+    }
 
     public List<Torcedor> listar() throws Exception{
         List<Torcedor> lista = new ArrayList<>();
@@ -68,21 +66,23 @@ public class TorcedorDAO {
         return null;
     }
 
-    public void atualizar(Torcedor torcedor)throws Exception{
-        String sql = "UPDATE Torcedor SET nome=?,N_camisa=?,id_time=? WHERE id=?";
+    public void atualizar(Torcedor torcedor) throws Exception {
+        String sql = "UPDATE Torcedor SET nome=?, email=?, cpf=? WHERE id=?";
 
         try(Connection c = ConnectionPostgres.getConection();
             PreparedStatement ps = c.prepareStatement(sql)){
 
             ps.setString(1, torcedor.getNome());
-            ps.setString(2,torcedor.getEmail());
+            ps.setString(2, torcedor.getEmail());
             ps.setString(3, torcedor.getCpf());
+            ps.setInt(4, torcedor.getId());
             ps.executeUpdate();
         }
     }
+    
 
     public void excluir(int id) throws Exception {
-        String sql = "DELETE FROM Jogador WHERE id=?";
+        String sql = "DELETE FROM Torcedor WHERE id=?";
 
         try(Connection c = ConnectionPostgres.getConection();
             PreparedStatement ps = c.prepareStatement(sql)) {

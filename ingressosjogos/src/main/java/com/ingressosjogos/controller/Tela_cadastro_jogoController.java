@@ -5,19 +5,23 @@
 package com.ingressosjogos.controller;
 
 import com.ingressosjogos.bd.DAO.EstadioDAO;
-import bd.DAO.IngressoDAO;
-import bd.DAO.JogoDAO;
+import com.ingressosjogos.bd.DAO.IngressoDAO;
+import com.ingressosjogos.bd.DAO.JogoDAO;
 import com.ingressosjogos.bd.DAO.TimeDAO;
 import com.ingressosjogos.bd.model.Estadio;
 import com.ingressosjogos.bd.model.Ingresso;
 import com.ingressosjogos.bd.model.Jogo;
 import com.ingressosjogos.bd.model.Time;
+
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,7 +31,6 @@ import javafx.scene.control.TextField;
 
 public class Tela_cadastro_jogoController implements Initializable {
 
-    
     @FXML
     private TextField campoNomeEstadio;
     @FXML
@@ -35,34 +38,43 @@ public class Tela_cadastro_jogoController implements Initializable {
     @FXML
     private TextField campoCapacidadeEstadio;
 
-    
+
     @FXML
     private TextField campoTimeCasa;
     @FXML
     private TextField campoTimeFora;
 
-    
+
     @FXML
     private DatePicker campoDataJogo;
     @FXML
     private TextField campoHoraJogo;
 
-    
+
     @FXML
     private TextField campoPrecoIngresso;
 
-    //  mensagens de erro/sucesso
+
     @FXML
     private Label labelMensagemAdmin;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-    }    
+
+    }
+    
+    @FXML
+    private void voltarParaJogos(ActionEvent event) {
+        try {
+            com.ingressosjogos.App.setRoot("tela_jogos");
+        } catch (Exception e) {
+            System.out.println("Erro ao voltar para a tela de jogos: " + e.getMessage());
+        }
+    }
 
     @FXML
     private void salvarCadastroCompleto(ActionEvent event) {
-        // 1. Capturando e validando os dados da tela
+
         String nomeEstadio = campoNomeEstadio.getText();
         String localEstadio = campoLocalEstadio.getText();
         String capacidadeTexto = campoCapacidadeEstadio.getText();
@@ -78,7 +90,7 @@ public class Tela_cadastro_jogoController implements Initializable {
             return;
         }
 
-        // (Texto para Número / Data)
+        // Conversões de (Texto para Número / Data)
         int capacidade;
         double precoBase;
         Timestamp dataHoraBanco;
@@ -91,37 +103,41 @@ public class Tela_cadastro_jogoController implements Initializable {
             LocalDateTime dataHoraCompleta = LocalDateTime.of(data, hora);
             dataHoraBanco = Timestamp.valueOf(dataHoraCompleta);
             
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             labelMensagemAdmin.setText("Erro de formato: Verifique a Capacidade, Preço (use ponto) e Hora (HH:MM).");
             labelMensagemAdmin.setStyle("-fx-text-fill: red;");
             return;
         }
 
+        // ultimo passo salvar no Banco de Dados
         try {
-            // 1. Salvar o Estádio e pegar o ID
+
             Estadio estadio = new Estadio(nomeEstadio, localEstadio, capacidade);
             EstadioDAO estadioDAO = new EstadioDAO();
             int idEstadio = estadioDAO.salvarRetornandoId(estadio);
 
-            // 2. Salvar os Times e pegar os IDs
+
             TimeDAO timeDAO = new TimeDAO();
             int idTimeCasa = timeDAO.salvarRetornandoId(new Time(timeCasa));
             int idTimeFora = timeDAO.salvarRetornandoId(new Time(timeFora));
 
-            // 3. Salvar o Jogo e pegar o ID
+
             Jogo jogo = new Jogo(dataHoraBanco, idEstadio, idTimeCasa, idTimeFora);
             JogoDAO jogoDAO = new JogoDAO();
             int idJogo = jogoDAO.salvarRetornandoId(jogo);
 
-            // 4. geracao dos Ingressos 
-            IngressoDAO ingressoDAO = new IngressoDAO();
+
+            List<Ingresso> listaIngressos = new ArrayList<>();
             for(int i = 1; i <= capacidade; i++) {
                 String assento = "A" + i; 
                 Ingresso ingresso = new Ingresso(precoBase, assento, "livre", idJogo);
-                ingressoDAO.salvar(ingresso);
+                listaIngressos.add(ingresso);
             }
-
-            labelMensagemAdmin.setText("Partida e ingressos cadastrados com sucesso!");
+            
+            // salva todos os ingressos no banco de uma vez so
+            IngressoDAO ingressoDAO = new IngressoDAO();
+            ingressoDAO.salvarEmLote(listaIngressos);
+            labelMensagemAdmin.setText("Partida e " + capacidade + " ingressos cadastrados com sucesso!");
             labelMensagemAdmin.setStyle("-fx-text-fill: green;");
 
         } catch (Exception e) {
