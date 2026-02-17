@@ -9,7 +9,6 @@ import java.util.List;
 import java.sql.SQLException;
 
 import com.ingressosjogos.bd.model.Jogo;
-import com.ingressosjogos.bd.model.Jogo;
 import com.ingressosjogos.bd.util.ConnectionPostgres;
 
 public class JogoDAO {
